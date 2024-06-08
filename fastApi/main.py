@@ -10,6 +10,54 @@ import uvicorn
 
 app = FastAPI()
 
+categories = {
+    0: "Gajah Afrika",
+    1: "Alpaka",
+    2: "Bison Amerika",
+    3: "Pemakan Semut",
+    4: "Rubah Arktik",
+    5: "Armadilo",
+    6: "Baboon",
+    7: "Sigung",
+    8: "Paus Biru",
+    9: "Beruang Grizzly",
+    10: "Onta",
+    11: "Lumba-lumba",
+    12: "Jerapah",
+    13: "Marmot Tanah",
+    14: "Sapi Skotlandia",
+    15: "Kuda",
+    16: "Serigala Emas",
+    17: "Kangguru",
+    18: "Koala",
+    19: "Lembu laut",
+    20: "Garangan",
+    21: "Kambing Gunung",
+    22: "Opossum",
+    23: "Orangutan",
+    24: "Berang-berang",
+    25: "Beruang Kutub",
+    26: "Landak",
+    27: "Panda Merah",
+    28: "Badak",
+    29: "Singa Laut",
+    30: "Anjing Laut",
+    31: "Macan Tutul Salju",
+    32: "Bajing",
+    33: "Possum Layang",
+    34: "Tapir",
+    35: "Kelelawar Vampir",
+    36: "Vikuna",
+    37: "Walrus",
+    38: "Babi Warthog",
+    39: "Kerbau",
+    40: "Cerpelai",
+    41: "Gnu",
+    42: "Wombat",
+    43: "Yak",
+    44: "Zebra",
+    }
+
 # Load the trained model
 # Load the trained model and label encoder
 model_path = 'model/mlp_model.h5'
@@ -44,10 +92,9 @@ async def predict(file: UploadFile = File(...)):
         features = extract_features(preprocessed_image)
         # Predict the class
         prediction = model.predict([features])
-        predicted_class_idx = prediction[0]
-        predicted_class_label = label_encoder.inverse_transform([predicted_class_idx])[0]
-        # Convert predicted class to string
-        predicted_class_label = str(predicted_class_label)
+        predicted_class_idx = int(prediction[0])  # Pastikan ini integer
+        # Get the animal name
+        predicted_class_label = categories.get(predicted_class_idx, "Unknown")
         return JSONResponse(content={"predicted_class": predicted_class_label})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
