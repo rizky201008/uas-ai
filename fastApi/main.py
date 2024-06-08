@@ -3,10 +3,10 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 import joblib
 import numpy as np
-from tensorflow.keras.applications.vgg19 import VGG19, preprocess_input
-from tensorflow.keras.models import Model
-from sklearn.preprocessing import LabelEncoder
+from keras.applications.vgg19 import VGG19, preprocess_input
+from keras.models import Model
 from io import BytesIO
+import uvicorn
 
 app = FastAPI()
 
@@ -53,5 +53,4 @@ async def predict(file: UploadFile = File(...)):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
