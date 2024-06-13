@@ -1,20 +1,59 @@
 <template>
-  <div style="height: 100vh; background-color: #421983;">
+  <div style="height: 100vh; background-color: #421983">
     <Navbar />
     <div v-if="loading" class="spinner-overlay">
       <div class="spinner"></div>
     </div>
-    <div v-if="showResults" class="container text-center d-flex align-items-center flex-column">
-      <div class="row mt-5">
-        <div class="col-12">
+    <div v-if="showResults" class="container">
+      <div class="row mt-5 text-center">
           <h1 class="text-white">{{ predictedClass }}</h1>
-        </div>
       </div>
       <div class="row mt-3">
-        <div class="col-12">
-          <h2 class="text-white">Details</h2>
-          
-          <button class="btn btn-secondary mt-3" @click="resetForm">Back</button>
+        <div class="text-white">
+          <h2 class="text-center mb-4">Details</h2>
+          <div class="row text-center">
+            <div class="col-5 text-end"><h3>Tinggi</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Height (cm)"] }} cm</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Berat</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Weight (kg)"] }} kg</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Warna</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details.Color }}</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Rentang Hidup</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Lifespan (years)"] }} years</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Jenis Makanan</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details.Diet }}</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Habitat</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details.Habitat }}</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Pemangsa</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details.Predators }}</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Kecepatan Rata-rata</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Average Speed (km/h)"] }} km/h</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Negara</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Countries Found"] }}</h3></div>
+        </div>
+        <div class="row text-center">
+            <div class="col-5 text-end"><h3>Status Konservasi</h3></div>
+            <div class="col-7 text-start"><h3>:  {{ details["Conservation Status"] }}</h3></div>
+        </div>
+          <div class="wrap text-center mt-2">
+            <button class="btn btn-secondary mt-3 text-" @click="resetForm">Back</button>
+          </div>
         </div>
       </div>
     </div>
@@ -23,16 +62,26 @@
         <div class="col-md-6 d-flex align-items-center">
           <div class="wrap">
             <h1 class="display-4 text-white">Mamalia apa Hayo?</h1>
-            <p class="lead text-white">A quick website to identify what's mammal that you see today.</p>
-            <form @submit.prevent="submitForm" class="d-flex justify-content-center align-items-center">
-              <input type="file" @change="handleFile" class="form-control me-2" aria-label="Upload File">
+            <p class="lead text-white">
+              A quick website to identify what's mammal that you see today.
+            </p>
+            <form
+              @submit.prevent="submitForm"
+              class="d-flex justify-content-center align-items-center"
+            >
+              <input
+                type="file"
+                @change="handleFile"
+                class="form-control me-2"
+                aria-label="Upload File"
+              />
               <button class="btn btn-success" type="submit">Cari</button>
             </form>
           </div>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-center">
           <div class="my-5">
-            <img src="@/assets/mammals.png" alt="Mammals" style="width: 100%;">
+            <img src="@/assets/mammals.png" alt="Mammals" style="width: 100%" />
           </div>
         </div>
       </div>
@@ -41,13 +90,13 @@
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
-import axios from 'axios';
-const BASE_URL = import.meta.env.VITE_BASE_URL_API;
+import Navbar from '@/components/Navbar.vue'
+import axios from 'axios'
+const BASE_URL = import.meta.env.VITE_BASE_URL_API
 
 export default {
   components: {
-    Navbar,
+    Navbar
   },
   data() {
     return {
@@ -55,45 +104,45 @@ export default {
       loading: false,
       showResults: false,
       predictedClass: '',
-      details: {},
-    };
+      details: {}
+    }
   },
   methods: {
     handleFile(event) {
-      this.file = event.target.files[0];
+      this.file = event.target.files[0]
     },
     async submitForm() {
       if (!this.file) {
-        alert('Please select a file.');
-        return;
+        alert('Please select a file.')
+        return
       }
 
-      this.loading = true;
-      const formData = new FormData();
-      formData.append('file', this.file);
+      this.loading = true
+      const formData = new FormData()
+      formData.append('file', this.file)
 
       try {
         const response = await axios.post(BASE_URL + '/predict', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        });
+        })
 
-        this.predictedClass = response.data.predicted_class;
-        this.details = response.data.details;
-        this.showResults = true;
+        this.predictedClass = response.data.predicted_class
+        this.details = response.data.details
+        this.showResults = true
       } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file:', error)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     resetForm() {
-      this.file = null;
-      this.showResults = false;
+      this.file = null
+      this.showResults = false
     }
   }
-};
+}
 </script>
 <style>
 /* Form input styles */
