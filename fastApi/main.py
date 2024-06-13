@@ -7,58 +7,58 @@ from keras.applications.vgg19 import VGG19, preprocess_input
 from keras.models import Model
 from io import BytesIO
 import uvicorn
+import pandas as pd
 
 app = FastAPI()
 
 categories = {
-    0: "Gajah Afrika",
-    1: "Alpaka",
-    2: "Bison Amerika",
-    3: "Pemakan Semut",
-    4: "Rubah Arktik",
-    5: "Armadilo",
+    0: "African Elephant",
+    1: "Alpaca",
+    2: "American Bison",
+    3: "Anteater",
+    4: "Arctic Fox",
+    5: "Armadillo",
     6: "Baboon",
-    7: "Sigung",
-    8: "Paus Biru",
-    9: "Beruang Grizzly",
-    10: "Onta",
-    11: "Lumba-lumba",
-    12: "Jerapah",
-    13: "Marmot Tanah",
-    14: "Sapi Skotlandia",
-    15: "Kuda",
-    16: "Serigala Emas",
-    17: "Kangguru",
+    7: "Badger",
+    8: "Blue Whale",
+    9: "Brown Bear",
+    10: "Camel",
+    11: "Dolphin",
+    12: "Giraffe",
+    13: "Groundhog",
+    14: "Highland Cattle",
+    15: "Horse",
+    16: "Jackal",
+    17: "Kangaroo",
     18: "Koala",
-    19: "Lembu laut",
-    20: "Garangan",
-    21: "Kambing Gunung",
+    19: "Manatee",
+    20: "Mongoose",
+    21: "Mountain Goat",
     22: "Opossum",
     23: "Orangutan",
-    24: "Berang-berang",
-    25: "Beruang Kutub",
-    26: "Landak",
-    27: "Panda Merah",
-    28: "Badak",
-    29: "Singa Laut",
-    30: "Anjing Laut",
-    31: "Macan Tutul Salju",
-    32: "Bajing",
-    33: "Possum Layang",
+    24: "Otter",
+    25: "Polar Bear",
+    26: "Porcupine",
+    27: "Red Panda",
+    28: "Rhinoceros",
+    29: "Sea Lion",
+    30: "Seal",
+    31: "Snow Leopard",
+    32: "Squirrel",
+    33: "Sugar Glider",
     34: "Tapir",
-    35: "Kelelawar Vampir",
-    36: "Vikuna",
+    35: "Vampire Bat",
+    36: "Vicuna",
     37: "Walrus",
-    38: "Babi Warthog",
-    39: "Kerbau",
-    40: "Cerpelai",
-    41: "Gnu",
+    38: "Warthog",
+    39: "Water Buffalo",
+    40: "Weasel",
+    41: "Wildebeast",
     42: "Wombat",
     43: "Yak",
     44: "Zebra",
-    }
+}
 
-# Load the trained model
 # Load the trained model and label encoder
 model_path = 'model/mlp_model.h5'
 label_encoder_path = 'model/label_encoder.pkl'
@@ -68,6 +68,10 @@ label_encoder = joblib.load(label_encoder_path)
 # Load VGG19 model
 base_model = VGG19(weights='imagenet', include_top=False)
 feature_extractor = Model(inputs=base_model.input, outputs=base_model.get_layer('block5_pool').output)
+
+# Load animal information dataset
+animal_info_df = pd.read_csv('Animal Dataset.csv')
+animal_info_dict = animal_info_df.set_index('Animal').T.to_dict()
 
 def preprocess_image(image: Image.Image):
     image = image.resize((224, 224))
@@ -92,10 +96,12 @@ async def predict(file: UploadFile = File(...)):
         features = extract_features(preprocessed_image)
         # Predict the class
         prediction = model.predict([features])
-        predicted_class_idx = int(prediction[0])  # Pastikan ini integer
+        predicted_class_idx = int(prediction[0])
         # Get the animal name
         predicted_class_label = categories.get(predicted_class_idx, "Unknown")
-        return JSONResponse(content={"predicted_class": predicted_class_label})
+        # Get animal details
+        animal_details = animal_info_dict.get(predicted_class_label, "No details available")
+        return JSONResponse(content={"predicted_class": predicted_class_label, "details": animal_details})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
