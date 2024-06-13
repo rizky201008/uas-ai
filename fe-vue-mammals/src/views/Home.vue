@@ -1,22 +1,38 @@
 <template>
   <div style="height: 100vh; background-color: #421983;">
     <Navbar />
-    <div class="container text-center d-flex align-items-center">
+    <div v-if="loading" class="spinner-overlay">
+      <div class="spinner"></div>
+    </div>
+    <div v-if="showResults" class="container text-center d-flex align-items-center flex-column">
+      <div class="row mt-5">
+        <div class="col-12">
+          <h1 class="text-white">{{ predictedClass }}</h1>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <h2 class="text-white">Details</h2>
+          
+          <button class="btn btn-secondary mt-3" @click="resetForm">Back</button>
+        </div>
+      </div>
+    </div>
+    <div v-else class="container text-center d-flex align-items-center">
       <div class="row mt-5">
         <div class="col-md-6 d-flex align-items-center">
           <div class="wrap">
             <h1 class="display-4 text-white">Mamalia apa Hayo?</h1>
-            <p class="lead text-white">A quick website to identify what's mammal that you see today.
-            </p>
-            <form class="d-flex justify-content-center align-items-center">
-              <input type="file" class="form-control me-2" placeholder="Insert email address" aria-label="Email">
+            <p class="lead text-white">A quick website to identify what's mammal that you see today.</p>
+            <form @submit.prevent="submitForm" class="d-flex justify-content-center align-items-center">
+              <input type="file" @change="handleFile" class="form-control me-2" aria-label="Upload File">
               <button class="btn btn-success" type="submit">Cari</button>
             </form>
           </div>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-center">
-          <div class=" my-5">
-            <img src="../assets/mammals.png" style="width: 100%;">
+          <div class="my-5">
+            <img src="@/assets/mammals.png" alt="Mammals" style="width: 100%;">
           </div>
         </div>
       </div>
@@ -26,20 +42,101 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+import axios from 'axios';
+const BASE_URL = import.meta.env.VITE_BASE_URL_API;
 
 export default {
   components: {
     Navbar,
   },
+  data() {
+    return {
+      file: null,
+      loading: false,
+      showResults: false,
+      predictedClass: '',
+      details: {},
+    };
+  },
+  methods: {
+    handleFile(event) {
+      this.file = event.target.files[0];
+    },
+    async submitForm() {
+      if (!this.file) {
+        alert('Please select a file.');
+        return;
+      }
+
+      this.loading = true;
+      const formData = new FormData();
+      formData.append('file', this.file);
+
+      try {
+        const response = await axios.post(BASE_URL + '/predict', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        this.predictedClass = response.data.predicted_class;
+        this.details = response.data.details;
+        this.showResults = true;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    resetForm() {
+      this.file = null;
+      this.showResults = false;
+    }
+  }
 };
 </script>
-
 <style>
+/* Form input styles */
 form input {
   width: 250px;
 }
 
 form button {
   width: 100px;
+}
+
+/* Spinner styles */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
