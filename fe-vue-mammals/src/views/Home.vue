@@ -6,51 +6,109 @@
     </div>
     <div v-if="showResults" class="container">
       <div class="row mt-5 text-center">
-          <h1 class="text-white">{{ predictedClass }}</h1>
+        <h1 class="text-white">{{ predictedClass }}</h1>
       </div>
       <div class="row mt-3">
         <div class="text-white">
-          <h2 class="text-center mb-4">Details</h2>
-          <div class="row text-center">
-            <div class="col-5 text-end"><h3>Tinggi</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Height (cm)"] }} cm</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Berat</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Weight (kg)"] }} kg</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Warna</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details.Color }}</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Rentang Hidup</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Lifespan (years)"] }} years</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Jenis Makanan</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details.Diet }}</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Habitat</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details.Habitat }}</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Pemangsa</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details.Predators }}</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Kecepatan Rata-rata</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Average Speed (km/h)"] }} km/h</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Negara</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Countries Found"] }}</h3></div>
-        </div>
-        <div class="row text-center">
-            <div class="col-5 text-end"><h3>Status Konservasi</h3></div>
-            <div class="col-7 text-start"><h3>:  {{ details["Conservation Status"] }}</h3></div>
-        </div>
+          <div v-if="details !== 'No details available'">
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Tinggi</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Height (cm)'] }} cm</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Berat</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Weight (kg)'] }} kg</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Warna</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details.Color }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Rentang Hidup</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Lifespan (years)'] }} years</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Jenis Makanan</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details.Diet }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Habitat</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details.Habitat }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Pemangsa</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details.Predators }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Kecepatan Rata-rata</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Average Speed (km/h)'] }} km/h</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Negara</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Countries Found'] }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Status Konservasi</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Conservation Status'] }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Family</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details.Family }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Periode Gestasi</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Gestation Period (days)'] }} days</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Kecepatan Tertinggi</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Top Speed (km/h)'] }} km/h</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Struktur Sosial</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Social Structure'] }}</h3>
+              </div>
+            </div>
+            <div class="row text-center">
+              <div class="col-5 text-end"><h3>Anak per Kelahiran</h3></div>
+              <div class="col-7 text-start">
+                <h3>: {{ details['Offspring per Birth'] }}</h3>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="row text-center">
+              <div class="col-12">
+                <h3>Tidak ada informasi mengenai {{ predictedClass }}</h3>
+              </div>
+            </div>
+          </div>
           <div class="wrap text-center mt-2">
             <button class="btn btn-secondary mt-3 text-" @click="resetForm">Back</button>
           </div>
